@@ -53,6 +53,26 @@ export default [
     }
   },
   {
+    path: '/system',
+    name: 'system',
+    meta: {
+      hide: true
+    },
+    component: Main,
+    children: [
+      {
+        path: 'user',
+        name: 'user',
+        meta: {
+          icon: 'ios-navigate',
+          title: '用户管理'
+        },
+        component: () => import('@/view/system/user/user-list.vue')
+      }
+    ]
+  },
+
+  {
     path: '/join',
     name: 'join',
     component: Main,
@@ -103,6 +123,15 @@ export default [
           title: '多功能表格'
         },
         component: () => import('@/view/components/tables/tables.vue')
+      },
+      {
+        path: 'remote_table_page',
+        name: 'remote_table_page',
+        meta: {
+          icon: 'md-grid',
+          title: '远程数据表格'
+        },
+        component: () => import('@/view/components/remote-table/remote-table.vue')
       },
       {
         path: 'split_pane_page',

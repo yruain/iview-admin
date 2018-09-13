@@ -7,6 +7,7 @@ import store from './store'
 import iView from 'iview'
 import i18n from '@/locale'
 import config from '@/config'
+// import lodash from 'lodash'
 import importDirective from '@/directive'
 import 'iview/dist/styles/iview.css'
 import './index.less'
@@ -24,6 +25,8 @@ Vue.config.productionTip = false
  * @description 全局注册应用配置
  */
 Vue.prototype.$config = config
+// Vue.prototype._ = lodash
+
 /**
  * 注册指令
  */
@@ -37,3 +40,13 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+
+// [{},{}] 取对象数组中的某个属性数组
+Array.getArrays = function(obj, porp) {
+  const temp = []
+  obj.reducer((temp, currentValue) => {
+    temp.push(currentValue[porp])
+  })
+  return temp
+}

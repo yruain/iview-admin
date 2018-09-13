@@ -1,7 +1,7 @@
 {
-  "name": "iview-admin",
+  "name": "iview-admin-demo",
   "version": "2.0.0",
-  "author": "Lison<lison.modern@gmail.com>",
+  "author": "yruain",
   "private": false,
   "scripts": {
     "dev": "vue-cli-service serve --open",
@@ -18,9 +18,10 @@
     "cropperjs": "^1.2.2",
     "echarts": "^4.0.4",
     "html2canvas": "^1.0.0-alpha.12",
-    "iview": "^3.0.0",
+    "iview": "^3.1.0",
     "iview-area": "^1.5.17",
     "js-cookie": "^2.2.0",
+    "lodash": "^4.17.10",
     "simplemde": "^1.11.2",
     "sortablejs": "^1.7.0",
     "vue": "^2.5.10",

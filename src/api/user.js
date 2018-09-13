@@ -1,30 +1,9 @@
-import axios from '@/libs/api.request'
+import QueryModule from '@/api/queryModule'
 
-export const login = ({ userName, password }) => {
-  const data = {
-    userName,
-    password
+class User extends QueryModule {
+  constructor() {
+    super('user', 'id')
   }
-  return axios.request({
-    url: 'login',
-    data,
-    method: 'post'
-  })
 }
 
-export const getUserInfo = (token) => {
-  return axios.request({
-    url: 'get_info',
-    params: {
-      token
-    },
-    method: 'get'
-  })
-}
-
-export const logout = (token) => {
-  return axios.request({
-    url: 'logout',
-    method: 'post'
-  })
-}
+export default new User()

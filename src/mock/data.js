@@ -2,6 +2,8 @@ import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
 const Random = Mock.Random
 
+const data = {code: "1", data: "", msg:"成功"}
+
 export const getTableData = req => {
   let tableData = []
   doCustomTimes(5, () => {
@@ -11,7 +13,9 @@ export const getTableData = req => {
       createTime: '@date'
     }))
   })
-  return tableData
+
+  data.data =tableData
+  return data
 }
 
 export const getDragList = req => {
@@ -22,5 +26,27 @@ export const getDragList = req => {
       id: Random.increment(10)
     }))
   })
-  return dragList
+
+  data.data =dragList
+  return data
+}
+
+const total = 34
+export const getPageTableData = req => {
+  req = JSON.parse(req.body)
+  let index = req.index || 1
+  let size = req.size || 10
+  let returnCount = total - size * (index - 1)
+  returnCount = returnCount > size ? size : returnCount
+  let tableData = []
+  doCustomTimes(returnCount, () => {
+    tableData.push(Mock.mock({
+      name: '@name',
+      email: '@email',
+      createTime: '@date'
+    }))
+  })
+  
+  data.data ={ total: total, items: tableData }
+  return data
 }

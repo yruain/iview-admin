@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import { Spin } from 'iview'
+import {Spin, Modal, Message} from 'iview'
 class HttpRequest {
   constructor (baseUrl = baseURL) {
     this.baseUrl = baseUrl
@@ -33,15 +33,52 @@ class HttpRequest {
       return Promise.reject(error)
     })
     // 响应拦截
-    instance.interceptors.response.use(res => {
+    instance.interceptors.response.use(response => {
       this.distroy(url)
-      const { data, status } = res
-      return { data, status }
-    }, error => {
-      this.distroy(url)
-      return Promise.reject(error)
+      
+      /**
+      * code为非20000是抛错 可结合自己业务进行修改
+      */
+     const res = response.data
+     if (res.code === -1) {
+      Message.error({
+         content: res.msg,
+         type: 'error',
+         duration: 5
+       })
+
+       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
+       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+        Modal.confirm({
+            title: '确定登出',
+            content:'你已被登出，可以取消继续留在该页面，或者重新登录',
+            okText: '重新登录',
+            cancelText:  '取消',
+            onOk:function(){
+              store.dispatch('handleLogOut').then(() => {
+                location.reload()// 为了重新实例化vue-router对象 避免bug
+              })
+            }
+          })
+       }
+       return Promise.reject('error')
+     } else {
+       return response.data
+     }
+
+  }, error => {
+    this.distroy(url)
+    Message.error({
+      content: error.message,
+      type: 'error',
+      duration: 5
     })
+    return Promise.reject(error)
+  })
+    
   }
+
+
   request (options) {
     const instance = axios.create()
     options = Object.assign(this.getInsideConfig(), options)

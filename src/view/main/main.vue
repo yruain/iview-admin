@@ -145,33 +145,38 @@ export default {
      * @description 初始化设置面包屑导航和标签导航
      */
     this.setTagNavList()
-    this.addTag({
-      route: this.$store.state.app.homeRoute
-    })
+    const homeRoute = this.$store.state.app.homeRoute
+    // 没有home则不添加
+    if (homeRoute.name){
+      this.addTag({
+        route: homeRoute
+      })
+    }
+    
     this.setBreadCrumb(this.$route.matched)
     // 设置初始语言
     this.setLocal(this.$i18n.locale)
     // 文档提示
-    this.$Notice.info({
-      title: '想快速上手，去看文档吧',
-      duration: 0,
-      render: (h) => {
-        return h('p', {
-          style: {
-            fontSize: '13px'
-          }
-        }, [
-          '点击',
-          h('a', {
-            attrs: {
-              href: 'https://lison16.github.io/iview-admin-doc/#/',
-              target: '_blank'
-            }
-          }, 'iview-admin2.0文档'),
-          '快速查看'
-        ])
-      }
-    })
+    // this.$Notice.info({
+    //   title: '想快速上手，去看文档吧',
+    //   duration: 0,
+    //   render: (h) => {
+    //     return h('p', {
+    //       style: {
+    //         fontSize: '13px'
+    //       }
+    //     }, [
+    //       '点击',
+    //       h('a', {
+    //         attrs: {
+    //           href: 'https://lison16.github.io/iview-admin-doc/#/',
+    //           target: '_blank'
+    //         }
+    //       }, 'iview-admin2.0文档'),
+    //       '快速查看'
+    //     ])
+    //   }
+    // })
   }
 }
 </script>

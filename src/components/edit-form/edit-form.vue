@@ -122,13 +122,13 @@
         const _this = this;
         this.$refs.editForm.validate(valid => {
           if(valid){
-            _this.$emit("on-after-validate",valid);
+            this.$emit("on-after-validate",valid);
           }
         });
       },
       handleReset(){
         this.$refs.editForm.resetFields();
-         _this.$emit("on-after-reset");
+         this.$emit("on-after-reset");
       },
       // 解析options
       parseSelectOptions(options){

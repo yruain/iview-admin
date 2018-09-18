@@ -155,6 +155,7 @@ export default {
       return this.api.pageData(param).then(response => {
         const {records, ...pageData} =  this.remoteDataFilter === 'function' ? Reflect.apply(this.remoteDataFilter, this.$parent, response.data)  : response.data
         this.tableData = records
+        this.pageData = pageData
         this.loading = false
       })
     },
@@ -179,7 +180,7 @@ export default {
     handleCreate() {
        this.editDialogType = 'create'
       this.editDialogVisible = true
-      this.formData = Object.assign({}, defaultEntity)
+      this.formData = Object.assign({}, this.defaultEntity)
     },
     submitDelete(params) {
       this.formData = params.row;

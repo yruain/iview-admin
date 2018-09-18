@@ -42,7 +42,7 @@ class QueryModule {
 
   getOne(params) {
     return request({
-      url: '/' + this.moduleName + '/getOne',
+      url: '/' + this.moduleName ,
       method: 'get',
       params
     })

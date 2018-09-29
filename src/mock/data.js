@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 import { doCustomTimes } from '@/libs/util'
 const Random = Mock.Random
 
-const data = {code: "1", data: "", msg:"成功"}
+const data = {code: 0, data: "", msg:"成功"}
 
 export const getTableData = req => {
   let tableData = []

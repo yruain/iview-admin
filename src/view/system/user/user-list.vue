@@ -5,8 +5,8 @@
       :api="api"
       :search="search"
 
-      :default-entity="formData"
-      :edit-forms="forms"
+      :default-entity="defaultEntity"
+      :edit="edit"
 
       :tableData="tableData"
       :columns="columns"
@@ -24,7 +24,7 @@
 import SearchPageTable from '_c/search-page-table'
 import user from '@/api/user'
 
-const defaultForm = {
+const defaultEntity = {
   id: '',
   userName: '',
   displayname: '',
@@ -62,6 +62,7 @@ export default {
     
     return {
       api: user,
+      defaultEntity,
       search: {
         entity: {
           userName: '',
@@ -69,21 +70,34 @@ export default {
         },
         forms:[
           {label: '用户名', prop: 'userName'},
-          {label: '状态', prop: 'enable', type: 'select', options:status}
+          {label: '状态', prop: 'enable', tag: 'select', options:status}
         ],
       },
-      
-      formData: defaultForm,
-      forms:[
-        {label: '用户名', prop: 'userName'},
-        {label: '显示名', prop: 'displayname'},
-        {label: '状态', prop: 'enable', type: 'select', 
-          options: function() {
-            const temp = status.filter(e => e.isEdit)
-            return temp
-          }},
-        {label: '描述', prop: 'mark'}
-      ],
+      edit:{
+        labelWidth: 75,
+         forms:[
+            {label: '用户名', prop: 'userName'},
+            {label: '显示名', prop: 'displayname'},
+            {label: '状态', prop: 'enable', tag: 'select', 
+              options: function() {
+                const temp = status.filter(e => e.isEdit)
+                return temp
+              }},
+            {label: '描述', prop: 'mark'}
+          ],
+          rules:{
+              userName: [
+                  { required: true, message: '用户名不能为空', trigger: 'blur' },
+                  { pattern : "\w{0,20}", message: '必须是0到20个英文字符', trigger: 'blur' }
+              ],
+              displayname: [
+                  { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' }
+              ],
+              mark: [
+                  { type: 'string', max: 20, message: '最大不能超过20个字符', trigger: 'blur' }
+              ]
+          },
+      },
       columns: [
         {title: '编号', type: 'index', key: 'handle'},
         {title: '用户名', key: 'userName', sortable: true},

@@ -40,13 +40,14 @@ class HttpRequest {
       * code为非20000是抛错 可结合自己业务进行修改
       */
      const res = response.data
-     if (res.code === -1) {
-      Message.error({
-         content: res.msg,
-         type: 'error',
-         duration: 5
-       })
-
+     if (res.code != 0) {
+      if (res.code === -1) {
+        Message.error({
+           content: res.msg,
+           type: 'error',
+           duration: 5
+         })
+      }
        // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
        if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
         Modal.confirm({

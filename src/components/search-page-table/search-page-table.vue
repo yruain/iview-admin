@@ -7,6 +7,10 @@
           :inline="true"
           :formData="search.entity"
           :forms="search.forms"
+          :rules="search.rules"
+          :show-message="search.showMessage"
+          :autocomplete="search.autocomplete"
+          :label-width="search.labelWidth"
           show-submit="true"
           submit-text="查询"
           show-reset="true"
@@ -55,15 +59,20 @@
     <Modal
       v-model="editDialogVisible"
       title="编辑"
-      :loading="true"
+      :loading="editLoading"
       @on-ok="handleEditModalOk"
     >
     <EditForm 
         ref="editForm"
-        :formData="formData"
-        :forms="editForms"
+        :rules="edit.rules"
+        :formData="edit.entity"
+        :forms="edit.forms"
+        :show-message="edit.showMessage"
+        :autocomplete="edit.autocomplete"
+        :label-width="edit.labelWidth"
         :edit="isEdit"
-        @on-after-validate="submitData"
+        @on-validate-ok="submitData"
+        @on-validate-error="validateError"
       />
     
     </Modal>
@@ -75,7 +84,32 @@
 import Tables from '_c/tables'
 import EditForm from '_c/edit-form'
 
-
+const formDefault= {
+      entity:{
+        type: Object,
+        default () {
+          return {}
+        }
+      },
+      forms:{
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      showMessage: {
+        type: Boolean,
+        default () {
+          return true
+        }
+      },
+      autocomplete:{
+        type: String,
+        default () {
+          return 'off'
+        }
+      }
+    }
 export default {
   name: 'SearchPageTable',
   components: {
@@ -87,13 +121,10 @@ export default {
     api:Object,
 
     /** 查询相关数据 */
-    search: {
-      entity:{},
-      forms:Array
-    },
+    search: formDefault,
     /** 实体默认参数，创建时使用 */
     defaultEntity:{},
-    editForms: Array,
+    edit:formDefault,
     columns:Array,
     /**过滤返回数据 */
     remoteDataFilter: Function
@@ -107,17 +138,18 @@ export default {
       // Dialog 隐藏还是显示
       editDialogVisible: false,
       loading:true,
+      editLoading:true,
       pageData: {
         total: 0,
         size: 10,
         current: 1,
         pages: 1
       },
-      formData: _this.defaultEntity,
       tableData:[]
     }
   },
   created () {
+    this.edit.entity= Object.assign({}, this.defaultEntity)
     this.fetchData()
   },
   computed: {
@@ -155,7 +187,6 @@ export default {
       return this.api.pageData(param).then(response => {
         const {records, ...pageData} =  this.remoteDataFilter === 'function' ? Reflect.apply(this.remoteDataFilter, this.$parent, response.data)  : response.data
         this.tableData = records
-        this.pageData = pageData
         this.loading = false
       })
     },
@@ -173,20 +204,20 @@ export default {
     handleStartEdit(params) {
       this.editDialogType = 'edit'
       this.editDialogVisible = true
-      this.formData = Object.assign({}, params.row)
+      this.edit.entity = Object.assign({}, params.row)
       this.temp = Object.assign({}, params.row)
       console.log('更新页面', params)
     },
     handleCreate() {
        this.editDialogType = 'create'
       this.editDialogVisible = true
-      this.formData = Object.assign({}, this.defaultEntity)
+      this.edit.entity = Object.assign({}, defaultEntity)
     },
     submitDelete(params) {
-      this.formData = params.row;
-      this.api.deleteById(this.formData).then(() => {
+      this.edit.entity = params.row;
+      this.api.deleteById(this.edit.entity).then(() => {
         for (const v of this.tableData) {
-          if (v[this.api.id] === this.formData[this.api.id]) {
+          if (v[this.api.id] === this.edit.entity[this.api.id]) {
             const index = this.tableData.indexOf(v)
             this.tableData.splice(index, 1)
             break
@@ -211,8 +242,11 @@ export default {
         this.submitUpdateData()
       }
     },
+    validateError(){
+        this.editLoading=false ;
+    },
     submitUpdateData(){
-        const tempData = Object.assign({}, this.formData)
+        const tempData = Object.assign({}, this.edit.entity)
         // 过滤掉相等的数据
         new Map(Object.entries(tempData)).forEach( (value, key) => {
           if( key != this.api.id &&  this.temp[key] === value){
@@ -224,14 +258,15 @@ export default {
 
         if (Object.keys(this.temp).length <= 1){
           console.log('没有需要更新的属性')
-          return;
+          this.editDialogVisible = false
+          return true;
         }
         // 更新，最少要有一个属性,ID除外
         this.api.updateData(this.temp).then(() => {
           for (const v of this.tableData) {
-            if (v.id === this.formData.id) {
+            if (v.id === this.edit.entity.id) {
               const index = this.tableData.indexOf(v)
-              this.tableData.splice(index, 1, this.formData)
+              this.tableData.splice(index, 1, this.edit.entity)
               break
             }
           }
@@ -240,7 +275,7 @@ export default {
         })
     },
     submitCreateData(){
-      const tempData = Object.assign({}, this.formData)
+      const tempData = Object.assign({}, this.edit.entity)
       this.api.insertData(tempData).then((response) => {
           const data = response.data
           this.tableData.splice(this.tableData.length, 0, data)

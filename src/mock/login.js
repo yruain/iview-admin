@@ -16,7 +16,7 @@ const USER_MAP = {
   }
 }
 
-const data = {code: "1", data: "", msg:"成功"}
+const data = {code: 0 , data: "", msg:"成功"}
 export const login = req => {
   req = JSON.parse(req.body)
   data.data= {token: USER_MAP[req.userName].token}

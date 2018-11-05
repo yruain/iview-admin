@@ -45,8 +45,9 @@ new Vue({
 // [{},{}] 取对象数组中的某个属性数组
 Array.getArrays = function(obj, porp) {
   const temp = []
-  obj.reducer((temp, currentValue) => {
-    temp.push(currentValue[porp])
-  })
+  for(let i in obj){
+    temp.push(obj[i][porp])
+  }
+ 
   return temp
 }

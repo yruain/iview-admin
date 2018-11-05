@@ -62,7 +62,7 @@ class HttpRequest {
             }
           })
        }
-       return Promise.reject('error')
+       return Promise.reject(new Error('错误的code ' + code));
      } else {
        return response.data
      }
@@ -74,7 +74,7 @@ class HttpRequest {
       type: 'error',
       duration: 5
     })
-    return Promise.reject(error)
+    return Promise.reject(error);
   })
     
   }

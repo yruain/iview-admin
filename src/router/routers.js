@@ -68,6 +68,24 @@ export default [
           title: '用户管理'
         },
         component: () => import('@/view/system/user/user-list.vue')
+      },
+      {
+        path: 'role',
+        name: 'role',
+        meta: {
+          icon: 'ios-navigate',
+          title: '角色管理'
+        },
+        component: () => import('@/view/system/role/role-list.vue')
+      },
+      {
+        path: 'resource',
+        name: 'resource',
+        meta: {
+          icon: 'ios-navigate',
+          title: '资源管理'
+        },
+        component: () => import('@/view/system/resource/resource-list.vue')
       }
     ]
   },

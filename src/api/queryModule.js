@@ -16,7 +16,6 @@ class QueryModule {
 
   listData(params) {
     params = Object.assign({}, params)
-    debugger
     return request({
       url: '/' + this.moduleName + '/list',
       method: 'get',
@@ -42,7 +41,7 @@ class QueryModule {
 
   getOne(params) {
     return request({
-      url: '/' + this.moduleName ,
+      url: '/' + this.moduleName + '/getOne',
       method: 'get',
       params
     })

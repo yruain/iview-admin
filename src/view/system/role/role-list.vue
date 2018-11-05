@@ -1,34 +1,34 @@
 <template>
   <div>
-    <search-page-table
-      ref="searchPageTable"
-      :api="api"
-      :search="search"
+        <search-page-table
+          ref="searchPageTable"
+          :api="api"
+          :search="search"
 
-      :default-entity="defaultEntity"
-      :edit="edit"
+          :default-entity="defaultEntity"
+          :edit="edit"
 
-      :tableData="tableData"
-      :columns="columns"
-      :remoteDataFilter="handelremoteData"
-    >
+          :tableData="tableData"
+          :columns="columns"
+          :remoteDataFilter="handelremoteData"
+        >
 
-      <template slot-scope="scope"  slot="statusRender">
-        {{  scope.row.enable | statusFilter}}
-      </template>
-    </search-page-table>
+          <template slot-scope="scope"  slot="statusRender">
+            {{  scope.row.enable | statusFilter}}
+          </template>
+        </search-page-table>
   </div>
 </template>
 
 <script>
 import SearchPageTable from '_c/search-page-table'
-import user from '@/api/user'
+import api from '@/api/role'
 
 const defaultEntity = {
-  id: '',
-  userName: '',
-  displayname: '',
-  enable: 0,
+  roleCode: '',
+  roleName: '',
+  /** 1启用，0禁用 */
+  enable: '1',
   mark: ''
 }
 
@@ -53,31 +53,34 @@ const status = [
 const statusCss = ['', 'success']
 
 export default {
-  name: 'userList',
+  name: 'roleList',
   components: {
+ 
     SearchPageTable
   },
   data () {
     const _this = this;
     
     return {
-      api: user,
+      api: api,
       defaultEntity,
       search: {
         entity: {
-          userName: '',
+          roleCode: '',
+          roleName: '',
           enable: ''
         },
         forms:[
-          {label: '用户名', prop: 'userName'},
+          {label: '角色编码', prop: 'roleCode'},
+          {label: '角色名称', prop: 'roleName'},
           {label: '状态', prop: 'enable', tag: 'select', options:status}
         ],
       },
       edit:{
         labelWidth: 75,
          forms:[
-            {label: '用户名', prop: 'userName'},
-            {label: '显示名', prop: 'displayname'},
+            {label: '角色编码', prop: 'roleCode'},
+            {label: '角色名称', prop: 'roleName'},
             {label: '状态', prop: 'enable', tag: 'select', 
               options: function() {
                 const temp = status.filter(e => e.isEdit)
@@ -87,11 +90,11 @@ export default {
           ],
           rules:{
               userName: [
-                  { required: true, message: '用户名不能为空', trigger: 'blur' },
+                  { required: true, message: '角色编码不能为空', trigger: 'blur' },
                   { pattern: "^[a-zA-Z0-9\-]{3,20}$", message: '必须是3到20个英文数字或’-‘', trigger: 'blur' }
               ],
               displayname: [
-                  { required: true, message: '名称不能为空', trigger: 'blur' }
+                  { required: true, message: '角色名称不能为空', trigger: 'blur' }
               ],
               mark: [
                   { type: 'string', max: 20, message: '最大不能超过20个字符', trigger: 'blur' }
@@ -100,8 +103,8 @@ export default {
       },
       columns: [
         {title: '编号', type: 'index', key: 'handle'},
-        {title: '用户名', key: 'userName', sortable: true},
-        {title: '显示名', key: 'displayname', editable: true},
+        {title: '角色编码', key: 'roleCode', sortable: true},
+        {title: '角色名称', key: 'roleName', editable: true},
         {title: '创建者', key: 'createOperator'},
         {title: '创建时间', key: 'createDate'},
         {title: '状态', key: 'enable', slotName: "statusRender"},
@@ -144,4 +147,5 @@ export default {
   }
 }
 </script>
+
 

@@ -15,10 +15,12 @@
           submit-text="查询"
           show-reset="true"
           reset-text="重置"
-          @on-after-validate="doFilter"
+          @on-validate-ok="doFilter"
         />
         <slot name="searchFormFooter" />
+        <Button type="primary" @click="handleCreate">创建</Button>&nbsp; &nbsp;<Button type="primary" @click="exportExcel">导出为Csv文件</Button>
       </div>
+      
       <tables 
         ref="dataTables"
         border
@@ -30,7 +32,6 @@
         @on-create="handleCreate"
       >
         
-       
        <slot 
             v-for="(row) in columns"
             v-if="row.slot"
@@ -41,7 +42,6 @@
 
       <div class="page-container-foot">
         <slot name="pageContainerHeader" />
-        <Button type="primary" @click="exportExcel">导出为Csv文件</Button>
         <Page 
           show-total
           show-elevator 
@@ -57,7 +57,10 @@
     </Card>
       
     <Modal
+      ref="editFormModal"
       v-model="editDialogVisible"
+      :visible="editDialogVisible"
+      :mask-closable="false"
       title="编辑"
       :loading="editLoading"
       @on-ok="handleEditModalOk"
@@ -179,7 +182,8 @@ export default {
       // 过滤空数据
       new Map(Object.entries(tmpParam)).forEach( (value, key)  => {
         if(value === null || value === undefined || value === ''){
-            return;
+          console.debug('查询条件 ' + key + ' is null')
+          return;
         }
         param[key] = value
       })
@@ -211,7 +215,7 @@ export default {
     handleCreate() {
        this.editDialogType = 'create'
       this.editDialogVisible = true
-      this.edit.entity = Object.assign({}, defaultEntity)
+      this.edit.entity = Object.assign({}, this.defaultEntity);
     },
     submitDelete(params) {
       this.edit.entity = params.row;
@@ -230,6 +234,13 @@ export default {
     handleEditModalOk(){
       this.$refs.editForm.handleSubmit();
     },
+    // 验证失败
+    validateError(){
+      this.editLoading=false
+      this.$nextTick(() => {
+        this.editLoading = true;
+      })
+    },
     // 提交编辑数据
     submitData() {
       if (this.editDialogType === 'show') {
@@ -241,9 +252,6 @@ export default {
       if (this.editDialogType === 'edit') {
         this.submitUpdateData()
       }
-    },
-    validateError(){
-        this.editLoading=false ;
     },
     submitUpdateData(){
         const tempData = Object.assign({}, this.edit.entity)
@@ -271,17 +279,25 @@ export default {
             }
           }
           this.$Message.success('更新成功')
+          this.editLoading=true
+          this.editDialogVisible = false
+        }).catch(()=>{
+          this.editLoading=true
           this.editDialogVisible = false
         })
     },
     submitCreateData(){
-      const tempData = Object.assign({}, this.edit.entity)
+      const tempData = Object.assign({}, this.defaultEntity);
       this.api.insertData(tempData).then((response) => {
           const data = response.data
           this.tableData.splice(this.tableData.length, 0, data)
           this.$Message.success('插入成功')
+          this.editLoading=true
           this.editDialogVisible = false
-      })
+      }).catch(()=>{
+          this.editLoading=true
+          this.editDialogVisible = false
+        })
     },
     handleSizeChange(val) {
       this.pageData.size = val

@@ -4,14 +4,11 @@ import routes from './routers'
 import store from '@/store'
 import iView from 'iview'
 import { getToken, canTurnTo } from '@/libs/util'
-import config from '@/config'
-const baseUrl = process.env.NODE_ENV === 'development' ? '' : config.baseUrl.pro
 
 Vue.use(Router)
 const router = new Router({
   routes,
-  mode: 'history',
-  base: baseUrl
+  mode: 'history'
 })
 const LOGIN_PAGE_NAME = 'login'
 

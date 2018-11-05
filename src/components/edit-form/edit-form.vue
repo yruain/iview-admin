@@ -20,12 +20,10 @@
            :error="form.error"
            :show-message="form.showMessage"
         >
-        
-
             <Input v-if="form.tag === 'input' || form.tag === undefined"
               v-model="formData[form.prop]"
               :readonly="form.readonly"
-              :disabled="form.disabled"
+              :disabled="form.disabled || form.readonly"
               :placeholder="form.placeholder"
               :key="form.prop+'_' + index"
                />
@@ -33,7 +31,7 @@
               <Select v-else-if="form.tag === 'select'" 
                 v-model="formData[form.prop]"
                 :readonly="form.readonly"
-                :disabled="form.disabled"
+                :disabled="form.disabled || form.readonly"
                 :placeholder="form.placeholder"
                 :key="form.prop+'_' + index"
                 >
@@ -48,7 +46,7 @@
               <RadioGroup v-else-if="form.tag === 'radio'" 
                 :value="formData[form.prop]"
                 :readonly="form.readonly"
-                :disabled="form.disabled"
+                :disabled="form.disabled || form.readonly"
                 :placeholder="form.placeholder"
                 :key="form.prop+'_' + index"
                 >
@@ -65,7 +63,7 @@
               <CheckboxGroup v-else-if="form.tag === 'checkbox'" 
               :value="formData[form.prop]"
               :readonly="form.readonly"
-              :disabled="form.disabled"
+              :disabled="form.disabled || form.readonly"
               :placeholder="form.placeholder"
               :key="form.prop+'_' + index"
               >
@@ -78,13 +76,12 @@
                   >
                 </Checkbox>
               </CheckboxGroup>
-
-      </tables>
         </FormItem>
 
         <FormItem class="form-item-button">
           <Button v-if="showSubmit" type="primary" @click="handleSubmit" >{{submitText}}</Button>
           <Button v-if="showReset" @click="handleReset">{{resetText}}</Button>
+          <slot name="formButton"></slot>
         </FormItem>
      </Form>
     
@@ -183,13 +180,14 @@
             _this.$emit("on-validate-ok",valid);
           } else{
             _this.$emit("on-validate-error",valid);
+            console.debug("validate Fail!");
             //this.$Message.error('Fail!');
           }
         });
       },
       handleReset(){
         this.$refs.editForm.resetFields();
-         _this.$emit("on-after-reset");
+        this.$emit("on-after-reset");
       },
       // 解析options
       parseOptions(options){
